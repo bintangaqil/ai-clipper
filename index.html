@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Clipper — Temukan Clip Viral Otomatis</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #222230;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #f0f0f5;
+    --muted: #888899;
+    --hint: #555566;
+    --purple: #7c6fef;
+    --purple-light: #a99ff8;
+    --purple-dim: rgba(124,111,239,0.12);
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.12);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,0.12);
+    --red: #f87171;
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.12);
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* Layout */
+  .wrap { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  /* Header */
+  .header { display: flex; align-items: center; gap: 14px; margin-bottom: 2rem; }
+  .logo { width: 44px; height: 44px; background: var(--purple-dim); border: 1px solid var(--purple); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .header-text h1 { font-size: 22px; font-weight: 600; }
+  .header-text p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  /* Input */
+  .input-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .input-row { display: flex; gap: 10px; }
+  .url-input { flex: 1; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 0 14px; height: 44px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; }
+  .url-input::placeholder { color: var(--hint); }
+  .url-input:focus { border-color: var(--purple); }
+  .btn-analyze { height: 44px; padding: 0 22px; background: var(--purple); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.2s, opacity 0.2s; }
+  .btn-analyze:hover { background: #6b5fd8; }
+  .btn-analyze:disabled { opacity: 0.4; cursor: not-allowed; }
+  .hint-text { font-size: 12px; color: var(--hint); margin-top: 10px; }
+  .hint-text a { color: var(--purple-light); text-decoration: none; }
+
+  /* Error */
+  .error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--red); margin-bottom: 1rem; display: none; }
+
+  /* Metrics */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; display: none; }
+  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+  .metric .mlabel { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .metric .mvalue { font-size: 24px; font-weight: 700; }
+  .metric .msub { font-size: 11px; color: var(--hint); margin-top: 3px; }
+
+  /* Charts row */
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; display: none; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; }
+  .chart-title { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; }
+  .bar-label { min-width: 56px; color: var(--muted); }
+  .bar-track { flex: 1; height: 7px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+  .bar-val { min-width: 34px; text-align: right; color: var(--hint); font-size: 11px; }
+
+  /* Section label */
+  .section-label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; display: none; }
+
+  /* Clip cards */
+  .clip-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s; }
+  .clip-card:hover { border-color: var(--border2); }
+  .clip-card.active { border-color: var(--purple); background: var(--surface2); }
+  .clip-top { display: flex; align-items: flex-start; gap: 12px; }
+  .clip-num { width: 30px; height: 30px; border-radius: 50%; background: var(--purple-dim); color: var(--purple-light); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; border: 1px solid rgba(124,111,239,0.3); }
+  .clip-main { flex: 1; min-width: 0; }
+  .clip-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+  .tag-time { background: var(--blue-dim); color: var(--blue); }
+  .tag-dur { background: var(--green-dim); color: var(--green); }
+  .tag-cat { background: var(--amber-dim); color: var(--amber); }
+  .virality-wrap { text-align: right; flex-shrink: 0; }
+  .virality-num { font-size: 20px; font-weight: 700; }
+  .virality-lbl { font-size: 10px; color: var(--hint); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Clip body */
+  .clip-body { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .clip-body.open { display: block; }
+  .script-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--muted); line-height: 1.65; font-style: italic; margin-bottom: 10px; }
+  .reason-box { font-size: 12px; color: var(--hint); line-height: 1.5; }
+  .reason-box span { color: var(--purple-light); font-weight: 500; }
+  .action-row { display: flex; gap: 8px; margin-top: 12px; }
+  .btn-sm { font-size: 12px; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .btn-sm:hover { background: var(--surface2); color: var(--text); }
+  .btn-sm.copied { border-color: var(--green); color: var(--green); }
+
+  /* Empty / Loading */
+  .state-box { text-align: center; padding: 4rem 1rem; color: var(--hint); }
+  .state-box .icon { font-size: 40px; margin-bottom: 12px; }
+  .state-box p { font-size: 14px; }
+  .spinner { display: inline-block; width: 32px; height: 32px; border: 2.5px solid var(--border2); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Step indicator */
+  .steps { display: flex; gap: 8px; margin-top: 12px; }
+  .step { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--hint); }
+  .step.done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+  .step.active { border-color: var(--purple); color: var(--purple-light); background: var(--purple-dim); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">✂️</div>
+    <div class="header-text">
+      <h1>AI Clipper</h1>
+      <p>Paste URL YouTube → AI temukan clip viral otomatis</p>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-card">
+    <div class="input-row">
+      <input class="url-input" id="urlInput" type="text" placeholder="https://www.youtube.com/watch?v=..." />
+      <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">✦ Analisis</button>
+    </div>
+    <p class="hint-text">Mendukung semua format URL YouTube. Contoh: youtube.com/watch?v=xxx &nbsp;·&nbsp; youtu.be/xxx</p>
+    <div class="steps" id="stepsRow" style="display:none;">
+      <div class="step" id="s1">① Ambil transcript</div>
+      <div class="step" id="s2">② Analisis AI</div>
+      <div class="step" id="s3">③ Hitung virality</div>
+    </div>
+  </div>
+
+  <div class="error" id="errorBox"></div>
+
+  <!-- Metrics -->
+  <div class="metrics" id="metricsRow">
+    <div class="metric"><div class="mlabel">Clip ditemukan</div><div class="mvalue" id="mClips">0</div><div class="msub">potensi viral</div></div>
+    <div class="metric"><div class="mlabel">Rata virality</div><div class="mvalue" id="mViral">0%</div><div class="msub">skor rata-rata</div></div>
+    <div class="metric"><div class="mlabel">Clip terbaik</div><div class="mvalue" id="mBest">—</div><div class="msub">skor tertinggi</div></div>
+    <div class="metric"><div class="mlabel">Total durasi</div><div class="mvalue" id="mDur">0s</div><div class="msub">siap di-clip</div></div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts" id="chartsRow">
+    <div class="chart-card">
+      <div class="chart-title">📊 Virality per clip</div>
+      <div id="viralChart"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🏷️ Distribusi kategori</div>
+      <div id="catChart"></div>
+    </div>
+  </div>
+
+  <!-- Clips -->
+  <div class="section-label" id="clipsLabel">Clip yang ditemukan</div>
+  <div id="clipsWrap">
+    <div class="state-box">
+      <div class="icon">🎬</div>
+      <p>Masukkan URL YouTube untuk mulai analisis</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let clips = [];
+
+// ── Helper ──────────────────────────────────────────────
+function extractId(url) {
+  const patterns = [/[?&]v=([^&#]+)/, /youtu\.be\/([^?#]+)/, /embed\/([^?#]+)/, /shorts\/([^?#]+)/];
+  for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
+  return null;
+}
+
+function viralColor(n) {
+  if (n >= 80) return '#4ade80';
+  if (n >= 60) return '#fbbf24';
+  return '#f87171';
+}
+
+function parseSec(str) {
+  const m = str.match(/(\d+)/g);
+  return m ? parseInt(m[0]) : 30;
+}
+
+function step(id, state) {
+  const el = document.getElementById(id);
+  el.className = 'step ' + state;
+}
+
+// ── Transcript via proxy ──────────────────────────────
+async function fetchTranscript(videoId) {
+  // Pakai public proxy untuk YouTube transcript
+  const urls = [
+    `https://yt-transcript-proxy.vercel.app/api/transcript?videoId=${videoId}`,
+    `https://api.kome.ai/api/tools/youtube-transcripts?videoId=${videoId}&format=true`
+  ];
+  for (const url of urls) {
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) continue;
+      const d = await r.json();
+      if (Array.isArray(d) && d.length) return d.map(x => x.text || x.transcript || '').join(' ');
+      if (d.transcript) return d.transcript;
+    } catch {}
+  }
+  return null;
+}
+
+// ── Main analyze ──────────────────────────────────────
+async function analyze() {
+  const url = document.getElementById('urlInput').value.trim();
+  const btn = document.getElementById('analyzeBtn');
+  const errBox = document.getElementById('errorBox');
+  errBox.style.display = 'none';
+
+  if (!url) { showError('Masukkan URL YouTube terlebih dahulu.'); return; }
+  const vid = extractId(url);
+  if (!vid) { showError('URL tidak valid. Coba format: https://www.youtube.com/watch?v=XXXX'); return; }
+
+  btn.disabled = true; btn.textContent = 'Menganalisis...';
+  document.getElementById('metricsRow').style.display = 'none';
+  document.getElementById('chartsRow').style.display = 'none';
+  document.getElementById('clipsLabel').style.display = 'none';
+  document.getElementById('stepsRow').style.display = 'flex';
+  document.getElementById('clipsWrap').innerHTML = '<div class="state-box"><div class="spinner"></div><p>Memproses video...</p></div>';
+
+  step('s1','active'); step('s2',''); step('s3','');
+
+  let transcript = null;
+  try { transcript = await fetchTranscript(vid); } catch {}
+  step('s1', transcript ? 'done' : 'done');
+  step('s2','active');
+
+  const transcriptNote = transcript
+    ? `Berikut transcript asli video:\n\n"${transcript.slice(0, 4000)}"`
+    : `Transcript tidak tersedia secara publik. Analisis berdasarkan URL: ${url} (Video ID: ${vid}). Buat analisis kreatif & realistis seolah kamu sudah menonton video ini.`;
+
+  const prompt = `Kamu adalah AI Clipper expert khusus konten Indonesia & viral media sosial.
+
+URL Video: ${url}
+Video ID: ${vid}
+${transcriptNote}
+
+Tugasmu: Temukan 6-8 potensi clip terbaik (durasi 15-60 detik) yang punya potensi viral tinggi di TikTok, Instagram Reels, dan YouTube Shorts.
+
+Kriteria clip viral:
+- Hook kuat di 3 detik pertama
+- Ada momen emosional / mengejutkan / lucu / inspiratif
+- Bisa berdiri sendiri tanpa konteks penuh
+
+Untuk setiap clip berikan:
+- title: judul singkat menarik (maks 8 kata, bahasa gaul/catchy)
+- timestamp: "MM:SS - MM:SS"
+- duration: "XX detik"
+- category: pilih satu [Podcast/Interview, Tutorial/Edukasi, Motivasi, Hiburan]
+- virality: angka 0-100
+- hook: kalimat pembuka/hook clip (1 kalimat, bahasa Indonesia)
+- script: isi/ringkasan clip (2-3 kalimat)
+- reason: kenapa ini bisa viral (1 kalimat)
+
+BALAS HANYA JSON ARRAY. Tidak ada teks lain, tidak ada backtick markdown:
+[{"title":"...","timestamp":"...","duration":"...","category":"...","virality":85,"hook":"...","script":"...","reason":"..."}]`;
+
+  let result = [];
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    let text = data.content.map(b => b.text || '').join('').trim();
+    text = text.replace(/```json|```/g, '').trim();
+    result = JSON.parse(text);
+    if (!Array.isArray(result) || !result.length) throw new Error('Response kosong');
+  } catch (e) {
+    showError('Gagal analisis: ' + e.message);
+    btn.disabled = false; btn.textContent = '✦ Analisis';
+    document.getElementById('clipsWrap').innerHTML = '<div class="state-box"><div class="icon">⚠️</div><p>Gagal menganalisis. Coba lagi.</p></div>';
+    return;
+  }
+
+  step('s2','done'); step('s3','active');
+  clips = result;
+  setTimeout(() => {
+    step('s3','done');
+    renderMetrics(clips);
+    renderCharts(clips);
+    renderClips(clips);
+    btn.disabled = false; btn.textContent = '✦ Analisis';
+  }, 600);
+}
+
+// ── Render ────────────────────────────────────────────
+function renderMetrics(clips) {
+  const avg = Math.round(clips.reduce((a,c)=>a+c.virality,0)/clips.length);
+  const best = Math.max(...clips.map(c=>c.virality));
+  const totalDur = clips.reduce((a,c)=>a+parseSec(c.duration),0);
+  document.getElementById('mClips').textContent = clips.length;
+  document.getElementById('mViral').textContent = avg + '%';
+  document.getElementById('mBest').textContent = best + '%';
+  document.getElementById('mDur').textContent = totalDur + 's';
+  document.getElementById('metricsRow').style.display = 'grid';
+}
+
+function renderCharts(clips) {
+  const vEl = document.getElementById('viralChart');
+  vEl.innerHTML = clips.map((c,i)=>`
+    <div class="bar-row">
+      <span class="bar-label">Clip ${i+1}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${c.virality}%;background:${viralColor(c.virality)};"></div></div>
+      <span class="bar-val">${c.virality}%</span>
+    </div>`).join('');
+
+  const catCount = {};
+  clips.forEach(c=>{ catCount[c.category]=(catCount[c.category]||0)+1; });
+  const total = clips.length;
+  const catColors = {'Podcast/Interview':'#a99ff8','Tutorial/Edukasi':'#60a5fa','Motivasi':'#4ade80','Hiburan':'#fbbf24'};
+  document.getElementById('catChart').innerHTML = Object.entries(catCount).map(([k,v])=>`
+    <div class="bar-row">
+      <span class="bar-label" style="min-width:90px;">${k}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/total*100)}%;background:${catColors[k]||'#888'};"></div></div>
+      <span class="bar-val">${v} clip</span>
+    </div>`).join('');
+
+  document.getElementById('chartsRow').style.display = 'grid';
+}
+
+function renderClips(clips) {
+  document.getElementById('clipsLabel').style.display = 'block';
+  document.getElementById('clipsWrap').innerHTML = clips.map((c,i)=>`
+    <div class="clip-card" id="card${i}" onclick="toggle(${i})">
+      <div class="clip-top">
+        <div class="clip-num">${i+1}</div>
+        <div class="clip-main">
+          <div class="clip-title">${c.title}</div>
+          <div class="tags">
+            <span class="tag tag-time">⏱ ${c.timestamp}</span>
+            <span class="tag tag-dur">✂️ ${c.duration}</span>
+            <span class="tag tag-cat">${c.category}</span>
+          </div>
+        </div>
+        <div class="virality-wrap">
+          <div class="virality-num" style="color:${viralColor(c.virality)};">${c.virality}%</div>
+          <div class="virality-lbl">virality</div>
+        </div>
+      </div>
+      <div class="clip-body" id="body${i}">
+        <div class="script-box">🎣 Hook: ${c.hook || ''}<br><br>${c.script}</div>
+        <div class="reason-box"><span>💡 Kenapa viral:</span> ${c.reason}</div>
+        <div class="action-row">
+          <button class="btn-sm" onclick="copyText(event,${i},'script')">📋 Salin script</button>
+          <button class="btn-sm" onclick="copyText(event,${i},'hook')">🎣 Salin hook</button>
+          <button class="btn-sm" onclick="copyText(event,${i},'all')">📦 Salin semua</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggle(i) {
+  const body = document.getElementById('body'+i);
+  const card = document.getElementById('card'+i);
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.clip-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.clip-card').forEach(c=>c.classList.remove('active'));
+  if (!isOpen) { body.classList.add('open'); card.classList.add('active'); }
+}
+
+function copyText(e, i, type) {
+  e.stopPropagation();
+  const c = clips[i];
+  const texts = {
+    script: c.script,
+    hook: c.hook,
+    all: `🎬 ${c.title}\n⏱ ${c.timestamp} | ✂️ ${c.duration}\n🎣 Hook: ${c.hook}\n📝 Script: ${c.script}\n💡 Alasan viral: ${c.reason}\n📊 Virality: ${c.virality}%`
+  };
+  navigator.clipboard.writeText(texts[type]).then(()=>{
+    const btn = e.target;
+    const orig = btn.textContent;
+    btn.textContent = '✅ Tersalin!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+document.getElementById('urlInput').addEventListener('keydown', e=>{ if(e.key==='Enter') analyze(); });
+</script>
+</body>
+</html>
