@@ -27,53 +27,56 @@
     --blue-dim: rgba(96,165,250,0.12);
   }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-  /* Layout */
   .wrap { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
-  /* Header */
   .header { display: flex; align-items: center; gap: 14px; margin-bottom: 2rem; }
   .logo { width: 44px; height: 44px; background: var(--purple-dim); border: 1px solid var(--purple); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
   .header-text h1 { font-size: 22px; font-weight: 600; }
   .header-text p { font-size: 13px; color: var(--muted); margin-top: 2px; }
 
-  /* Input */
+  .api-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .api-bar label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+  .api-row { display: flex; gap: 8px; align-items: center; }
+  .api-input { flex: 1; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 0 14px; height: 38px; color: var(--text); font-size: 13px; font-family: monospace; outline: none; }
+  .api-input:focus { border-color: var(--purple); }
+  .api-hint { font-size: 11px; color: var(--hint); margin-top: 6px; }
+  .api-hint a { color: var(--purple-light); text-decoration: none; }
+
   .input-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem; }
   .input-row { display: flex; gap: 10px; }
-  .url-input { flex: 1; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 0 14px; height: 44px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; }
+  .url-input { flex: 1; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 0 14px; height: 44px; color: var(--text); font-size: 14px; outline: none; }
   .url-input::placeholder { color: var(--hint); }
   .url-input:focus { border-color: var(--purple); }
-  .btn-analyze { height: 44px; padding: 0 22px; background: var(--purple); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.2s, opacity 0.2s; }
+  .btn-analyze { height: 44px; padding: 0 22px; background: var(--purple); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .btn-analyze:hover { background: #6b5fd8; }
   .btn-analyze:disabled { opacity: 0.4; cursor: not-allowed; }
   .hint-text { font-size: 12px; color: var(--hint); margin-top: 10px; }
-  .hint-text a { color: var(--purple-light); text-decoration: none; }
 
-  /* Error */
+  .steps { display: flex; gap: 8px; margin-top: 12px; }
+  .step { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--hint); }
+  .step.done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+  .step.active { border-color: var(--purple); color: var(--purple-light); background: var(--purple-dim); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.6} }
+
   .error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--red); margin-bottom: 1rem; display: none; }
 
-  /* Metrics */
-  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; display: none; }
+  .metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 1.5rem; }
   .metric { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
   .metric .mlabel { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
   .metric .mvalue { font-size: 24px; font-weight: 700; }
   .metric .msub { font-size: 11px; color: var(--hint); margin-top: 3px; }
 
-  /* Charts row */
-  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; display: none; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
   .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; }
   .chart-title { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
   .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; }
   .bar-label { min-width: 56px; color: var(--muted); }
   .bar-track { flex: 1; height: 7px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+  .bar-fill { height: 100%; border-radius: 4px; }
   .bar-val { min-width: 34px; text-align: right; color: var(--hint); font-size: 11px; }
 
-  /* Section label */
-  .section-label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; display: none; }
-
-  /* Clip cards */
-  .clip-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s; }
+  .section-label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .clip-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 10px; cursor: pointer; }
   .clip-card:hover { border-color: var(--border2); }
   .clip-card.active { border-color: var(--purple); background: var(--surface2); }
   .clip-top { display: flex; align-items: flex-start; gap: 12px; }
@@ -89,51 +92,52 @@
   .virality-num { font-size: 20px; font-weight: 700; }
   .virality-lbl { font-size: 10px; color: var(--hint); text-transform: uppercase; letter-spacing: 0.05em; }
 
-  /* Clip body */
   .clip-body { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
   .clip-body.open { display: block; }
   .script-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--muted); line-height: 1.65; font-style: italic; margin-bottom: 10px; }
   .reason-box { font-size: 12px; color: var(--hint); line-height: 1.5; }
   .reason-box span { color: var(--purple-light); font-weight: 500; }
   .action-row { display: flex; gap: 8px; margin-top: 12px; }
-  .btn-sm { font-size: 12px; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .btn-sm { font-size: 12px; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--muted); cursor: pointer; }
   .btn-sm:hover { background: var(--surface2); color: var(--text); }
   .btn-sm.copied { border-color: var(--green); color: var(--green); }
 
-  /* Empty / Loading */
   .state-box { text-align: center; padding: 4rem 1rem; color: var(--hint); }
   .state-box .icon { font-size: 40px; margin-bottom: 12px; }
   .state-box p { font-size: 14px; }
   .spinner { display: inline-block; width: 32px; height: 32px; border: 2.5px solid var(--border2); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 14px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Step indicator */
-  .steps { display: flex; gap: 8px; margin-top: 12px; }
-  .step { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--hint); }
-  .step.done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
-  .step.active { border-color: var(--purple); color: var(--purple-light); background: var(--purple-dim); animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- Header -->
   <div class="header">
     <div class="logo">✂️</div>
     <div class="header-text">
       <h1>AI Clipper</h1>
-      <p>Paste URL YouTube → AI temukan clip viral otomatis</p>
+      <p>Paste URL YouTube → AI temukan clip viral otomatis · Powered by Gemini (Gratis)</p>
     </div>
   </div>
 
-  <!-- Input -->
+  <!-- API Key input -->
+  <div class="api-bar">
+    <label>🔑 Gemini API Key</label>
+    <div class="api-row">
+      <input class="api-input" id="apiKey" type="password" placeholder="AIzaSy..." />
+    </div>
+    <p class="api-hint">
+      Gratis di <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> — login Google → klik "Create API Key" → paste di sini. Key tersimpan di browser, tidak dikirim ke server manapun.
+    </p>
+  </div>
+
+  <!-- URL input -->
   <div class="input-card">
     <div class="input-row">
       <input class="url-input" id="urlInput" type="text" placeholder="https://www.youtube.com/watch?v=..." />
       <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">✦ Analisis</button>
     </div>
-    <p class="hint-text">Mendukung semua format URL YouTube. Contoh: youtube.com/watch?v=xxx &nbsp;·&nbsp; youtu.be/xxx</p>
+    <p class="hint-text">Mendukung semua format URL YouTube · Tekan Enter untuk analisis</p>
     <div class="steps" id="stepsRow" style="display:none;">
       <div class="step" id="s1">① Ambil transcript</div>
       <div class="step" id="s2">② Analisis AI</div>
@@ -143,16 +147,14 @@
 
   <div class="error" id="errorBox"></div>
 
-  <!-- Metrics -->
-  <div class="metrics" id="metricsRow">
+  <div class="metrics" id="metricsRow" style="display:none;">
     <div class="metric"><div class="mlabel">Clip ditemukan</div><div class="mvalue" id="mClips">0</div><div class="msub">potensi viral</div></div>
     <div class="metric"><div class="mlabel">Rata virality</div><div class="mvalue" id="mViral">0%</div><div class="msub">skor rata-rata</div></div>
     <div class="metric"><div class="mlabel">Clip terbaik</div><div class="mvalue" id="mBest">—</div><div class="msub">skor tertinggi</div></div>
     <div class="metric"><div class="mlabel">Total durasi</div><div class="mvalue" id="mDur">0s</div><div class="msub">siap di-clip</div></div>
   </div>
 
-  <!-- Charts -->
-  <div class="charts" id="chartsRow">
+  <div class="charts" id="chartsRow" style="display:none;">
     <div class="chart-card">
       <div class="chart-title">📊 Virality per clip</div>
       <div id="viralChart"></div>
@@ -163,21 +165,18 @@
     </div>
   </div>
 
-  <!-- Clips -->
-  <div class="section-label" id="clipsLabel">Clip yang ditemukan</div>
+  <div class="section-label" id="clipsLabel" style="display:none;">Clip yang ditemukan</div>
   <div id="clipsWrap">
     <div class="state-box">
       <div class="icon">🎬</div>
-      <p>Masukkan URL YouTube untuk mulai analisis</p>
+      <p>Masukkan Gemini API Key dan URL YouTube untuk mulai</p>
     </div>
   </div>
 
 </div>
-
 <script>
 let clips = [];
 
-// ── Helper ──────────────────────────────────────────────
 function extractId(url) {
   const patterns = [/[?&]v=([^&#]+)/, /youtu\.be\/([^?#]+)/, /embed\/([^?#]+)/, /shorts\/([^?#]+)/];
   for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
@@ -196,39 +195,39 @@ function parseSec(str) {
 }
 
 function step(id, state) {
-  const el = document.getElementById(id);
-  el.className = 'step ' + state;
+  document.getElementById(id).className = 'step ' + state;
 }
 
-// ── Transcript via proxy ──────────────────────────────
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
 async function fetchTranscript(videoId) {
-  // Pakai public proxy untuk YouTube transcript
-  const urls = [
-    `https://yt-transcript-proxy.vercel.app/api/transcript?videoId=${videoId}`,
-    `https://api.kome.ai/api/tools/youtube-transcripts?videoId=${videoId}&format=true`
-  ];
-  for (const url of urls) {
-    try {
-      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!r.ok) continue;
-      const d = await r.json();
-      if (Array.isArray(d) && d.length) return d.map(x => x.text || x.transcript || '').join(' ');
-      if (d.transcript) return d.transcript;
-    } catch {}
-  }
+  try {
+    const r = await fetch(`https://api.kome.ai/api/tools/youtube-transcripts?videoId=${videoId}&format=true`, { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (d.transcript) return d.transcript;
+    if (Array.isArray(d) && d.length) return d.map(x => x.text || '').join(' ');
+  } catch {}
   return null;
 }
 
-// ── Main analyze ──────────────────────────────────────
 async function analyze() {
+  const apiKey = document.getElementById('apiKey').value.trim();
   const url = document.getElementById('urlInput').value.trim();
   const btn = document.getElementById('analyzeBtn');
-  const errBox = document.getElementById('errorBox');
-  errBox.style.display = 'none';
+  document.getElementById('errorBox').style.display = 'none';
 
+  if (!apiKey) { showError('Masukkan Gemini API Key dulu. Gratis di aistudio.google.com/app/apikey'); return; }
   if (!url) { showError('Masukkan URL YouTube terlebih dahulu.'); return; }
   const vid = extractId(url);
-  if (!vid) { showError('URL tidak valid. Coba format: https://www.youtube.com/watch?v=XXXX'); return; }
+  if (!vid) { showError('URL tidak valid. Contoh: https://www.youtube.com/watch?v=XXXX'); return; }
+
+  // Simpan key di localStorage biar gak perlu isi ulang
+  localStorage.setItem('gemini_key', apiKey);
 
   btn.disabled = true; btn.textContent = 'Menganalisis...';
   document.getElementById('metricsRow').style.display = 'none';
@@ -239,16 +238,15 @@ async function analyze() {
 
   step('s1','active'); step('s2',''); step('s3','');
 
-  let transcript = null;
-  try { transcript = await fetchTranscript(vid); } catch {}
-  step('s1', transcript ? 'done' : 'done');
-  step('s2','active');
+  let transcript = await fetchTranscript(vid);
+  step('s1', 'done');
+  step('s2', 'active');
 
   const transcriptNote = transcript
-    ? `Berikut transcript asli video:\n\n"${transcript.slice(0, 4000)}"`
-    : `Transcript tidak tersedia secara publik. Analisis berdasarkan URL: ${url} (Video ID: ${vid}). Buat analisis kreatif & realistis seolah kamu sudah menonton video ini.`;
+    ? `Berikut transcript asli video:\n\n"${transcript.slice(0, 5000)}"`
+    : `Transcript tidak tersedia. Analisis berdasarkan URL: ${url} (Video ID: ${vid}). Buat analisis kreatif & realistis seolah kamu sudah menonton videonya.`;
 
-  const prompt = `Kamu adalah AI Clipper expert khusus konten Indonesia & viral media sosial.
+  const prompt = `Kamu adalah AI Clipper expert khusus konten viral Indonesia.
 
 URL Video: ${url}
 Video ID: ${vid}
@@ -259,7 +257,7 @@ Tugasmu: Temukan 6-8 potensi clip terbaik (durasi 15-60 detik) yang punya potens
 Kriteria clip viral:
 - Hook kuat di 3 detik pertama
 - Ada momen emosional / mengejutkan / lucu / inspiratif
-- Bisa berdiri sendiri tanpa konteks penuh
+- Bisa berdiri sendiri tanpa konteks penuh video
 
 Untuk setiap clip berikan:
 - title: judul singkat menarik (maks 8 kata, bahasa gaul/catchy)
@@ -267,34 +265,41 @@ Untuk setiap clip berikan:
 - duration: "XX detik"
 - category: pilih satu [Podcast/Interview, Tutorial/Edukasi, Motivasi, Hiburan]
 - virality: angka 0-100
-- hook: kalimat pembuka/hook clip (1 kalimat, bahasa Indonesia)
+- hook: kalimat pembuka/hook clip (1 kalimat, bahasa Indonesia yang menarik)
 - script: isi/ringkasan clip (2-3 kalimat)
-- reason: kenapa ini bisa viral (1 kalimat)
+- reason: kenapa ini bisa viral (1 kalimat singkat)
 
-BALAS HANYA JSON ARRAY. Tidak ada teks lain, tidak ada backtick markdown:
+PENTING: Balas HANYA JSON array murni. Tanpa teks lain, tanpa markdown, tanpa backtick:
 [{"title":"...","timestamp":"...","duration":"...","category":"...","virality":85,"hook":"...","script":"...","reason":"..."}]`;
 
   let result = [];
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+        })
+      }
+    );
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
-    let text = data.content.map(b => b.text || '').join('').trim();
+
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     text = text.replace(/```json|```/g, '').trim();
-    result = JSON.parse(text);
-    if (!Array.isArray(result) || !result.length) throw new Error('Response kosong');
+
+    // Cari array JSON di dalam response
+    const match = text.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Format response tidak valid');
+    result = JSON.parse(match[0]);
+    if (!Array.isArray(result) || !result.length) throw new Error('Hasil kosong');
   } catch (e) {
-    showError('Gagal analisis: ' + e.message);
+    showError('Gagal analisis: ' + e.message + '. Cek API key dan coba lagi.');
     btn.disabled = false; btn.textContent = '✦ Analisis';
-    document.getElementById('clipsWrap').innerHTML = '<div class="state-box"><div class="icon">⚠️</div><p>Gagal menganalisis. Coba lagi.</p></div>';
+    document.getElementById('clipsWrap').innerHTML = '<div class="state-box"><div class="icon">⚠️</div><p>Gagal menganalisis. Cek API key & coba lagi.</p></div>';
     return;
   }
 
@@ -306,10 +311,9 @@ BALAS HANYA JSON ARRAY. Tidak ada teks lain, tidak ada backtick markdown:
     renderCharts(clips);
     renderClips(clips);
     btn.disabled = false; btn.textContent = '✦ Analisis';
-  }, 600);
+  }, 500);
 }
 
-// ── Render ────────────────────────────────────────────
 function renderMetrics(clips) {
   const avg = Math.round(clips.reduce((a,c)=>a+c.virality,0)/clips.length);
   const best = Math.max(...clips.map(c=>c.virality));
@@ -322,8 +326,7 @@ function renderMetrics(clips) {
 }
 
 function renderCharts(clips) {
-  const vEl = document.getElementById('viralChart');
-  vEl.innerHTML = clips.map((c,i)=>`
+  document.getElementById('viralChart').innerHTML = clips.map((c,i)=>`
     <div class="bar-row">
       <span class="bar-label">Clip ${i+1}</span>
       <div class="bar-track"><div class="bar-fill" style="width:${c.virality}%;background:${viralColor(c.virality)};"></div></div>
@@ -338,7 +341,7 @@ function renderCharts(clips) {
     <div class="bar-row">
       <span class="bar-label" style="min-width:90px;">${k}</span>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/total*100)}%;background:${catColors[k]||'#888'};"></div></div>
-      <span class="bar-val">${v} clip</span>
+      <span class="bar-val">${v}</span>
     </div>`).join('');
 
   document.getElementById('chartsRow').style.display = 'grid';
@@ -364,7 +367,7 @@ function renderClips(clips) {
         </div>
       </div>
       <div class="clip-body" id="body${i}">
-        <div class="script-box">🎣 Hook: ${c.hook || ''}<br><br>${c.script}</div>
+        <div class="script-box">🎣 <b>Hook:</b> ${c.hook || ''}<br><br>${c.script}</div>
         <div class="reason-box"><span>💡 Kenapa viral:</span> ${c.reason}</div>
         <div class="action-row">
           <button class="btn-sm" onclick="copyText(event,${i},'script')">📋 Salin script</button>
@@ -401,13 +404,13 @@ function copyText(e, i, type) {
   });
 }
 
-function showError(msg) {
-  const el = document.getElementById('errorBox');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
 document.getElementById('urlInput').addEventListener('keydown', e=>{ if(e.key==='Enter') analyze(); });
+
+// Load saved API key
+window.addEventListener('load', ()=>{
+  const saved = localStorage.getItem('gemini_key');
+  if (saved) document.getElementById('apiKey').value = saved;
+});
 </script>
 </body>
 </html>
